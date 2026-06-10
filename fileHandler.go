@@ -38,3 +38,19 @@ func getAllTasks(filename string) (TaskList, error) {
 	}
 	return tasks, nil
 }
+
+func writeTasks(filename string, tasks TaskList) error {
+	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644) //open in write/truncate mode
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+	for _, t := range tasks {
+		if err := encoder.Encode(t); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+

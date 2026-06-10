@@ -6,6 +6,20 @@
             "external": "file:///home/madvith/Projects/goTrack/fileHandler.go",
             "path": "/home/madvith/Projects/goTrack/fileHandler.go",
             "scheme": "file"
+        },
+        {
+            "$mid": 1,
+            "fsPath": "/home/madvith/Projects/goTrack/go.mod",
+            "external": "file:///home/madvith/Projects/goTrack/go.mod",
+            "path": "/home/madvith/Projects/goTrack/go.mod",
+            "scheme": "file"
+        },
+        {
+            "$mid": 1,
+            "fsPath": "/home/madvith/Projects/goTrack/main.go",
+            "external": "file:///home/madvith/Projects/goTrack/main.go",
+            "path": "/home/madvith/Projects/goTrack/main.go",
+            "scheme": "file"
         }
     ]
 }

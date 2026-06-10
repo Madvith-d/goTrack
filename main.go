@@ -7,13 +7,6 @@ import (
 	"strings"
 )
 
-type Task struct {
-	ID        string `json:"id"`        //remap the fields to theior lowercase version while encoding
-	Title     string `json:"title"`     //so that the task.jsonl file is consistent
-	Completed bool   `json:"completed"` //so that the task.jsonl file is consistent
-}
-type TaskList []Task
-
 const fileName string = "tasks.jsonl"
 
 func main() {
@@ -54,8 +47,65 @@ func main() {
 			return
 		}
 		for _, task := range tasks {
-			fmt.Println(task)
+			status := "[ ]"
+			if task.Completed {
+				status = "[x]"
+			}
+
+			fmt.Printf("%s %s %s\n", status, task.ID, task.Title)
 		}
+	case "del":
+		if len(os.Args) != 3 {
+			fmt.Println("Usage : goTrack del <taskID>")
+			return
+		}
+		tasks, err := getAllTasks(fileName)
+		if err != nil {
+			fmt.Println("Error getting tasks:", err)
+			return
+		}
+		taskId := os.Args[2]
+		for i, task := range tasks {
+			if task.ID == taskId {
+				for j := i + 1; j < len(tasks); j++ {
+					id, _ := strconv.Atoi(tasks[j].ID)
+					tasks[j].ID = strconv.Itoa(id - 1)
+				}
+				tasks = append(tasks[:i], tasks[i+1:]...)
+				err = writeTasks(fileName, tasks)
+				if err != nil {
+					fmt.Println("Error deleting task:", err)
+					return
+				}
+				fmt.Println("Deleted task:", task)
+				return
+			}
+		}
+		fmt.Println("Task not found")
+	case "done":
+		if len(os.Args) != 3 {
+			fmt.Println("Usage : goTrack done <taskID>")
+			return
+		}
+		tasks, err := getAllTasks(fileName)
+		if err != nil {
+			fmt.Println("Error getting tasks:", err)
+			return
+		}
+		taskId := os.Args[2]
+		for i := 0; i < len(tasks); i++ {
+			if tasks[i].ID == taskId {
+				tasks[i].Completed = true
+				err = writeTasks(fileName, tasks)
+				if err != nil {
+					fmt.Println("Error completing task:", err)
+					return
+				}
+				fmt.Println("Completed task:", tasks[i])
+				return
+			}
+		}
+		fmt.Println("Task not found")
 	default:
 		fmt.Println("Unknown command")
 	}
