@@ -1,0 +1,11 @@
+{
+    "copy-project-context.filePathsToContext": [
+        {
+            "$mid": 1,
+            "fsPath": "/home/madvith/Projects/goTrack/fileHandler.go",
+            "external": "file:///home/madvith/Projects/goTrack/fileHandler.go",
+            "path": "/home/madvith/Projects/goTrack/fileHandler.go",
+            "scheme": "file"
+        }
+    ]
+}

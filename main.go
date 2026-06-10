@@ -1,11 +1,10 @@
 package main
 
 import (
-	"crypto/rand"
-	"encoding/json"
 	"fmt"
-	"math/big"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type Task struct {
@@ -15,12 +14,9 @@ type Task struct {
 }
 type TaskList []Task
 
-func (t TaskList) Add(task Task) TaskList {
-	t = append(t, task)
-	return t
-}
-func main() {
+const fileName string = "tasks.jsonl"
 
+func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("Usage: goTrack <command>")
 		return
@@ -32,41 +28,35 @@ func main() {
 			fmt.Println("Usage: goTrack add <task>")
 			return
 		}
-		randId, err := rand.Int(rand.Reader, big.NewInt(1000))
+		tasks, err := getAllTasks(fileName)
 		if err != nil {
-			fmt.Println("Error generating random ID:", err)
+			fmt.Println("Error getting tasks:", err)
 			return
 		}
+		taskId := strconv.Itoa(len(tasks) + 1)
+
+		title := strings.Join(os.Args[2:], " ")
 		task := Task{
-			ID:        randId.String(),
-			Title:     os.Args[2],
+			ID:        taskId,
+			Title:     title,
 			Completed: false,
 		}
-		err = AppendTask("tasks.jsonl", task)
+		err = appendTask(fileName, task)
 		if err != nil {
 			fmt.Println("Error appending task:", err)
 			return
 		}
 		fmt.Println("Added task:", task)
 	case "list":
-		fmt.Println("Listing tasks")
+		tasks, err := getAllTasks(fileName)
+		if err != nil {
+			fmt.Println("Error getting tasks:", err)
+			return
+		}
+		for _, task := range tasks {
+			fmt.Println(task)
+		}
 	default:
 		fmt.Println("Unknown command")
 	}
-}
-
-// This will append the tasks to the tasks.jsonl file
-func AppendTask(filename string, task ...Task) error {
-	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644) //open in append mode
-	if err != nil {
-		return err
-	}
-	encoder := json.NewEncoder(file) //new encoder
-	defer file.Close()               //close the file after the funtion is done
-	for _, t := range task {
-		if err := encoder.Encode(t); err != nil {
-			return err
-		}
-	}
-	return nil
 }
